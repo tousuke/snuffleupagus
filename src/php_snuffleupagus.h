@@ -19,6 +19,7 @@
 #include "ext/standard/info.h"
 #include "ext/standard/php_var.h"
 #include "ext/pcre/php_pcre.h"
+#include "ext/session/php_session.h"
 #include "php.h"
 #include "php_ini.h"
 #include "zend_hash.h"

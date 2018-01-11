@@ -328,10 +328,8 @@ int hook_function(const char* original_name, HashTable* hook_table,
   HashTable* ht =
       hook_execution_table == true ? EG(function_table) : CG(function_table);
 
-  /* The `mb` module likes to hook functions, like strlen->mb_strlen,
-   * so we have to hook both of them. */
-
   if ((func = zend_hash_str_find_ptr(ht, VAR_AND_LEN(original_name)))) {
+    /* If the function is already hooked, return. */
     if (func->handler == new_function) {
       return SUCCESS;
     }
@@ -352,6 +350,8 @@ int hook_function(const char* original_name, HashTable* hook_table,
     }
   }
 
+  /* The `mb` module likes to hook functions, like strlen->mb_strlen,
+   * so we have to hook both of them. */
   if (0 == strncmp(original_name, "mb_", 3)) {
     CG(compiler_options) |= ZEND_COMPILE_NO_BUILTIN_STRLEN;
     if (zend_hash_str_find(ht, VAR_AND_LEN(original_name + 3))) {

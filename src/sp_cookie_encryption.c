@@ -6,6 +6,8 @@ ZEND_DECLARE_MODULE_GLOBALS(snuffleupagus)
 
 static zend_long nonce_d = 0;
 
+void (*orig_start_session)(INTERNAL_FUNCTION_PARAMETERS);
+
 static inline void generate_key(unsigned char *key) {
   PHP_SHA256_CTX ctx;
   const char *user_agent = getenv("HTTP_USER_AGENT");
@@ -272,7 +274,51 @@ PHP_FUNCTION(sp_setcookie) {
   RETURN_TRUE;
 }
 
+/* You might want to take a look at the `php_session_send_cookie` function
+ * in php's source code. The `session_start` function crafts cookies by hand,
+ * instead of using php's primitives. This is why we have to hook it if we want
+ * to be able to mark session cookies with the samesite attribute. */
+PHP_FUNCTION(session_start_callback) {
+  char *orig_cookie_domain = PS(cookie_domain);
+  char *new_cookie_domain = NULL;
+  const sp_cookie *cookie_config = sp_lookup_cookie_config(PS(session_name));
+
+  if (cookie_config && cookie_config->samesite) {
+    char *cookie_samesite =
+        (cookie_config->samesite == lax)
+            ? SAMESITE_COOKIE_FORMAT SP_TOKEN_SAMESITE_LAX
+            : SAMESITE_COOKIE_FORMAT SP_TOKEN_SAMESITE_STRICT;
+    if (PS(cookie_domain)[0]) {
+      size_t ldomain = strlen(PS(cookie_domain));
+      size_t lsamesite = strlen(cookie_samesite);
+      if (ldomain + lsamesite < ldomain) {
+        sp_log_err(
+            "samesite",
+            "The cookie's domain '%s' is too long to apply samesite on it.",
+            PS(cookie_domain));
+      } else {
+        new_cookie_domain = emalloc(ldomain + lsamesite);
+        PS(cookie_domain) = new_cookie_domain;
+        memcpy(PS(cookie_domain) + ldomain, cookie_samesite,
+               strlen(cookie_samesite));
+      }
+    } else {
+      PS(cookie_domain) = cookie_samesite;
+    }
+  }
+
+  orig_start_session(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+
+  efree(new_cookie_domain);
+  PS(cookie_domain) = orig_cookie_domain;
+}
+
 int hook_cookies() {
+  zend_internal_function *func = zend_hash_str_find_ptr(
+      CG(function_table), "session_start", strlen("session_start"));
+  orig_start_session = func->handler;
+  func->handler = PHP_FN(session_start_callback);
+
   HOOK_FUNCTION("setcookie", sp_internal_functions_hook, PHP_FN(sp_setcookie),
                 false);
 
