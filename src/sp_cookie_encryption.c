@@ -277,7 +277,9 @@ PHP_FUNCTION(sp_setcookie) {
 /* You might want to take a look at the `php_session_send_cookie` function
  * in php's source code. The `session_start` function crafts cookies by hand,
  * instead of using php's primitives. This is why we have to hook it if we want
- * to be able to mark session cookies with the samesite attribute. */
+ * to be able to mark session cookies with the samesite attribute.
+ * This is a hack: it should be done with a proper session handler.
+ * See https://github.com/nbs-system/snuffleupagus/issues/122 for details. */
 PHP_FUNCTION(session_start_callback) {
   char *orig_cookie_domain = PS(cookie_domain);
   char *new_cookie_domain = NULL;
