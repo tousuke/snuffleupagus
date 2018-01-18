@@ -73,7 +73,7 @@ ZEND_TSRMLS_CACHE_EXTERN()
 #endif
 
 #if HAVE_BUNDLED_PCRE
- #include "ext/pcre/pcre2lib/pcre2.h"
+ #include "ext/pcre/pcrelib/pcre.h"
  #undef pcre_exec
  #undef pcre_compile
  #define sp_pcre_exec pcre_exec
