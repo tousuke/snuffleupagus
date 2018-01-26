@@ -32,25 +32,6 @@ void sp_log_msg(char const* feature, char const* level, const char* fmt, ...) {
               client_ip ? client_ip : "0.0.0.0", feature, level, msg);
 }
 
-zend_always_inline int is_regexp_matching(const pcre* regexp, const char* str) {
-  int vec[30];
-  int ret = 0;
-
-  assert(NULL != regexp);
-  assert(NULL != str);
-
-  ret = sp_pcre_exec(regexp, NULL, str, strlen(str), 0, 0, vec,
-                     sizeof(vec) / sizeof(int));
-
-  if (ret < 0) {
-    if (ret != PCRE_ERROR_NOMATCH) {
-      sp_log_err("regexp", "Something went wrong with a regexp (%d).", ret);
-    }
-    return false;
-  }
-  return true;
-}
-
 int compute_hash(const char* const filename, char* file_hash) {
   unsigned char buf[1024];
   unsigned char digest[SHA256_SIZE];
@@ -198,7 +179,7 @@ bool sp_match_value(const char* value, const char* to_match, const pcre* rx) {
       return true;
     }
   } else if (rx) {
-    return is_regexp_matching(rx, value);
+    return sp_is_regexp_matching(rx, value);
   } else {
     return true;
   }
@@ -377,9 +358,7 @@ int hook_regexp(const pcre* regexp, HashTable* hook_table,
 
   ZEND_HASH_FOREACH_STR_KEY(ht, key) {
     if (key) {
-      int vec[30];
-      int ret = sp_pcre_exec(regexp, NULL, key->val, key->len, 0, 0, vec,
-                             sizeof(vec) / sizeof(int));
+      int ret = sp_is_regexp_matching_len(regexp, key->val, key->len);
       if (ret < 0) { /* Error or no match*/
         if (PCRE_ERROR_NOMATCH != ret) {
           sp_log_err("pcre", "Runtime error with pcre, error code: %d", ret);

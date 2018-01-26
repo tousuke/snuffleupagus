@@ -39,6 +39,7 @@
 #include "sp_unserialize.h"
 #include "sp_upload_validation.h"
 #include "sp_utils.h"
+#include "sp_pcre_compat.h"
 
 
 extern zend_module_entry snuffleupagus_module_entry;
@@ -69,18 +70,6 @@ ZEND_END_MODULE_GLOBALS(snuffleupagus)
 
 #if defined(ZTS) && defined(COMPILE_DL_SNUFFLEUPAGUS)
 ZEND_TSRMLS_CACHE_EXTERN()
-#endif
-
-#if HAVE_BUNDLED_PCRE
- #include "ext/pcre/pcrelib/pcre.h"
- #undef pcre_exec
- #undef pcre_compile
- #define sp_pcre_exec pcre_exec
- #define sp_pcre_compile pcre_compile
-#else
- #include "pcre.h"
- #define sp_pcre_exec pcre_exec
- #define sp_pcre_compile pcre_compile
 #endif
 
 PHP_FUNCTION(check_disabled_function);
