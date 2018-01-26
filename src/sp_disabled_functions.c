@@ -440,7 +440,7 @@ ZEND_FUNCTION(check_disabled_function) {
 static int hook_functions(const sp_list_node* config) {
   while (config && config->data) {
     const char* function_name = ((sp_disabled_function*)config->data)->function;
-    const pcre* function_name_regexp =
+    const sp_pcre* function_name_regexp =
         ((sp_disabled_function*)config->data)->r_function;
 
     if (NULL != function_name) {  // hook function by name

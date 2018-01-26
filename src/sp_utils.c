@@ -173,7 +173,7 @@ char* sp_convert_to_string(zval* zv) {
   return estrdup("");
 }
 
-bool sp_match_value(const char* value, const char* to_match, const pcre* rx) {
+bool sp_match_value(const char* value, const char* to_match, const sp_pcre* rx) {
   if (to_match) {
     if (0 == strcmp(to_match, value)) {
       return true;
@@ -255,7 +255,7 @@ void sp_log_disable_ret(const char* restrict path,
   }
 }
 
-bool sp_match_array_key(const zval* zv, const char* to_match, const pcre* rx) {
+bool sp_match_array_key(const zval* zv, const char* to_match, const sp_pcre* rx) {
   zend_string* key;
   zend_ulong idx;
 
@@ -279,7 +279,7 @@ bool sp_match_array_key(const zval* zv, const char* to_match, const pcre* rx) {
 }
 
 bool sp_match_array_value(const zval* arr, const char* to_match,
-                          const pcre* rx) {
+                          const sp_pcre* rx) {
   zval* value;
 
   ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(arr), value) {
@@ -349,7 +349,7 @@ int hook_function(const char* original_name, HashTable* hook_table,
   return SUCCESS;
 }
 
-int hook_regexp(const pcre* regexp, HashTable* hook_table,
+int hook_regexp(const sp_pcre* regexp, HashTable* hook_table,
                 void (*new_function)(INTERNAL_FUNCTION_PARAMETERS),
                 bool hook_execution_table) {
   zend_string* key;
