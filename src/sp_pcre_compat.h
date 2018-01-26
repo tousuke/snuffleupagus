@@ -1,5 +1,9 @@
+
 #ifndef SP_PCRE_COMPAT_H
 #define SP_PCRE_COMPAT_H
+
+#include <stdlib.h>
+#include <stdbool.h>
 
 #if HAVE_BUNDLED_PCRE
   #ifdef PCRE2_MAJOR
@@ -16,9 +20,6 @@
  //#define sp_pcre_exec pcre_exec
  //#define sp_pcre_compile pcre_compile
 #endif
-
-
-#include "php_snuffleupagus.h"
 
 #ifdef PCRE2_MAJOR
   #define sp_pcre pcre2_code

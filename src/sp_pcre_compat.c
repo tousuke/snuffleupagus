@@ -1,5 +1,7 @@
 #include "sp_pcre_compat.h"
 
+#include "php_snuffleupagus.h"
+
 sp_pcre* sp_pcre_compile(const char *const pattern) {
 	sp_pcre* ret = NULL;
 	const char *pcre_error;
@@ -18,7 +20,7 @@ sp_pcre* sp_pcre_compile(const char *const pattern) {
 	return ret;
 }
 
-zend_always_inline bool sp_is_regexp_matching_len(const sp_pcre* regexp, const char* str, size_t len) {
+bool sp_is_regexp_matching_len(const sp_pcre* regexp, const char* str, size_t len) {
   int vec[30];
   int ret = 0;
 
