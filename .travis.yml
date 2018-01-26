@@ -36,7 +36,6 @@ matrix:
     php: '7.1'
   - env: TARGET="clang php7.2" CC="clang"
     php: '7.2'
-  allow_failures:
   - env: TARGET="clang php nightly with valgrind" CC="clang"
     php: nightly
   - env: TARGET="gcc php nightly" CC="gcc"
