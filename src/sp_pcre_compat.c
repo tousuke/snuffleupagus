@@ -18,7 +18,7 @@ sp_pcre* sp_pcre_compile(const char *const pattern) {
 	return ret;
 }
 
-zend_always_inline int sp_is_regexp_matching_len(const sp_pcre* regexp, const char* str, size_t len) {
+zend_always_inline bool sp_is_regexp_matching_len(const sp_pcre* regexp, const char* str, size_t len) {
   int vec[30];
   int ret = 0;
 
@@ -26,7 +26,7 @@ zend_always_inline int sp_is_regexp_matching_len(const sp_pcre* regexp, const ch
   assert(NULL != str);
 
 #ifdef PCRE2_MAJOR
-	pcre2_match_data *match_data = pcre2_match_data_create_from_pattern(re, NULL);
+	pcre2_match_data *match_data = pcre2_match_data_create_from_pattern(regexp, NULL);
 	ret = pcre2_match(regexp, str, len, 0, 0, match_data, NULL);
 #else
   ret = pcre_exec(regexp, NULL, str, len, 0, 0, vec,
