@@ -24,6 +24,7 @@
 #include "zend_string.h"
 #include "zend_extensions.h"
 
+#include "sp_pcre_compat.h"
 #include "sp_list.h"
 #include "sp_tree.h"
 #include "sp_var_parser.h"
@@ -39,7 +40,6 @@
 #include "sp_unserialize.h"
 #include "sp_upload_validation.h"
 #include "sp_utils.h"
-#include "sp_pcre_compat.h"
 
 
 extern zend_module_entry snuffleupagus_module_entry;

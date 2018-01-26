@@ -21,9 +21,9 @@
 #include "php_snuffleupagus.h"
 
 #ifdef PCRE2_MAJOR
-#define sp_pcre pcre2_code
+  #define sp_pcre pcre2_code
 #else
-#define sp_pcre pcre
+  #define sp_pcre pcre
 #endif
 
 sp_pcre* sp_pcre_compile(const char* str);
